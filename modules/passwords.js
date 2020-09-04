@@ -4,6 +4,7 @@ function passwordDB() {
 
 function passwordEmail() {
     return '!234qweR'
+    // return 'password'
 };
 
 module.exports = {

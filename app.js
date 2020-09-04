@@ -13,7 +13,6 @@ const entities = new Entities();
 // modules
 const {
   insertMessage,
-  // getMessage,
   formatMessage,
   getMessages
 } = require('./modules/messages');
@@ -37,21 +36,6 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 // session
-// const session = require('express-session')({
-//   secret: "chat",
-//   resave: true,
-//   saveUninitialized: true
-// });var sharedsession = require("express-socket.io-session");
-// app.use(session);
-// io.use(sharedsession(session, {
-//   autoSave:true
-// }));
-
-// const session = require('express-session');
-// app.use(session({
-//   secret: 'chat',
-//   cookie: {}
-// }));
 const session = require('express-session');
 const runQuery = require('./modules/connection');
 app.use(session({
@@ -256,17 +240,6 @@ app.post('/', (req, res) => {
   if (firstname && lastname && username && email && password && password === repassword) {
     registerUser(firstname, lastname, username, email, password).then(() => {
       res.json(7);
-      // loginUser(username, password).then(user => {
-      //   req.session.user = user.username;
-      //   req.session.userID = user.ID;
-      //   res.json(1);
-      // }).catch(err => {
-      //   if (err === 3) {
-      //     res.json(3);
-      //   } else {
-      //     res.json(4);
-      //   };
-      // });  
     }).catch(err => {
       if (err === "exists") {
         res.json(2);
