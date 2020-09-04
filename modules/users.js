@@ -17,7 +17,6 @@ function registerUser(firstname, lastname, username, email, password) {
       message += "Welcome to our website!\n";
       message += "To verify your email address please click on the following link:\n";
       message += `http://localhost:3000/verify/${email}`;           
-      // https://ingo-emailverfication.coding-school.org/verify/${newUser._id}
       emailSender.sendEmail(email, 'Verify Email', message).then(() => {
         console.log('email sent');
         resolve();

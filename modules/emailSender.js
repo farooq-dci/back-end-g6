@@ -1,19 +1,12 @@
 const nodemailer = require('nodemailer');
 const {passwordEmail} = require('./passwords');
 // create delivery box for email
-// const transporter = nodemailer.createTransport({
-//     service: 'gmail',        // 'mailserver',
-//     auth: {
-//         user: 'felix.wurst@gmail.com',      // 'ingo@coding-school.org',
-//         pass: passwordEmail()
-//     }
-// });
 const transporter = nodemailer.createTransport({
     host: "mail.coding-school.org",
     port: 465,
     auth: {
         user: "info@coding-school.org",
-        pass: "!234qweR"
+        pass: passwordEmail()
     },
     tls: {
         rejectUnauthorized: false
@@ -24,7 +17,7 @@ const transporter = nodemailer.createTransport({
 function sendEmail(email, subject, message) {
     return new Promise((resolve, reject) => {
         const mailOption = {
-            from: 'info@coding-school.org',      // 'ingo@coding-school.org',
+            from: 'info@coding-school.org',
             to: email,
             subject: subject,
             text: message
