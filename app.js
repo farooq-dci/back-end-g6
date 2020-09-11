@@ -37,7 +37,7 @@ const io = socketio(server);
 
 // session
 const session = require('express-session');
-const runQuery = require('./modules/connection');
+// const runQuery = require('./modules/connection');
 app.use(session({
   secret: "chat",
   resave: true,

@@ -40,7 +40,7 @@
                    <button class="btn"><i class="fas fa-file-image"></i></button>
                    <input type="file" id="image-upload" accept="image/x-png,image/gif,image/jpeg" />
                 </label>
-                <button class="btn"><i class="fas fa-times"></i></button>
+                <button class="btn" style="display: none;"><i class="fas fa-times"></i></button>
             </nav>
             <form id="chat-form">
                 <input id="msgInp" type="text" class="emoji" placeholder="Enter Message" required autocomplete="off"/>
@@ -73,6 +73,7 @@
         const chatMessages = document.querySelector('.chat-messages');
         const roomName = document.getElementsByClassName('room-name');
         const userList = document.getElementById('users');
+        const nav = document.querySelector('nav');
         // user variables
         const username = '<%=username%>';
         const userID = '<%=userID%>';
@@ -86,21 +87,31 @@
         });
 
 /* ************************************************************ EVENTS ******************************************************* */
+        // show navigation bar for mobile
+        const x = window.matchMedia("(max-width: 700px)")
+        function mobileMedia() {
+            if (x.matches) {
+                nav.lastElementChild.style.display = 'block';
+            } else {
+                nav.lastElementChild.style.display = 'none';
+            };
+        };
+        x.addListener(mobileMedia);
         // open and close mobile menu for chat
-        let navUp = false;
+        let navShow = false;
         document.querySelector('.btn.menu').addEventListener('click', e => {
             e.preventDefault();
-            let nav = document.querySelector('nav');
-            if (navUp === false) {
+            nav.style.display = 'flex';
+            if (navShow === false) {
                 e.target.parentElement.style.backgroundColor = "#e6e9ff";
                 e.target.parentElement.style.color = "black";
                 nav.id = "up";
-                navUp = true;
+                navShow = true;
             } else {
                 e.target.parentElement.style.backgroundColor = "black";
                 e.target.parentElement.style.color = "#e6e9ff";
                 nav.id = "down";
-                navUp = false;
+                navShow = false;
             };
         });
         
@@ -229,16 +240,6 @@
             // add message at the beginning to chat
             const chat = document.querySelector('.chat-messages');
             chat.insertBefore(div, chat.firstChild);
-        };
-        // add room name to DOM
-        function outputRoomName(room) {
-            for(let i = 0; i < roomName.length; i++) {
-                roomName[i].innerText = room;
-            };
-        };
-        // add users to DOM
-        function outputUsers(users) {
-            userList.innerHTML = `${users.map(user => `<li>${user}</li>`).join('')}`;
         };
         // add room name to DOM
         function outputRoomName(room) {
