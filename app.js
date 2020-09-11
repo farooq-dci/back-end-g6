@@ -14,7 +14,8 @@ const entities = new Entities();
 const {
   insertMessage,
   formatMessage,
-  getMessages
+  getMessages,
+  getMessage
 } = require('./modules/messages');
 const {
   registerUser,
@@ -37,7 +38,6 @@ const io = socketio(server);
 
 // session
 const session = require('express-session');
-// const runQuery = require('./modules/connection');
 app.use(session({
   secret: "chat",
   resave: true,
@@ -105,25 +105,12 @@ io.on('connection', socket => {
             text: msg.message,
             time: moment(msg.message_time).format('DD.MM.YY H:mm')
           });
-          socket.emit('history', formatMessage(msg.username, msg.message))
+          socket.emit('history', formatMessage(msg.username, msg.message, moment(msg.message_time).format('DD.MM.YY H:mm')));
         });
       }).catch(err => {
         console.log(err);
       });
     };
-/*    getMessages(room).then(messages => {
-      const msgs = [];
-      messages.forEach(msg => {
-        msgs.push({
-          username: msg.username,
-          text: msg.message,
-          time: moment(msg.message_time).format('DD.MM.YY H:mm')
-        });
-      });
-    });
-    // send info to chatroom that user has left the chat
-    io.to(room).emit('message', formatMessage(botName, `${username} has left the chat.`));
-*/
   });
 
   // listen for chatMessage
@@ -131,8 +118,12 @@ io.on('connection', socket => {
     // const userID = socket.handshake.session.userID;
     const user = {msg, username, userID, room, roomID};
     // save message to db
-    insertMessage(entities.encode(user.msg), user.userID, user.roomID).then(() => {
-      io.to(user.room).emit('message', formatMessage(user.username, user.msg));
+    insertMessage(entities.encode(user.msg), user.userID, user.roomID).then((response) => {
+      getMessage(response.insertId).then(data => {
+        io.to(user.room).emit('message', formatMessage(user.username, user.msg, moment(data[0].message_time).format('DD.MM.YY H:mm')));
+      }).catch(err => {
+        console.log(err);
+      });
     }).catch(err => {
       socket.emit('message', formatMessage(botName, 'Error! Not able to save message!'));
     });
@@ -324,7 +315,7 @@ app.get('/chat/:room', (req, res) => {
         getMessages(req.params.room, 1).then(messages => {
           const msgs = [];
           messages.forEach(msg => {
-            msgs.push({
+            msgs.unshift({
               username: msg.username,
               text: msg.message,
               time: moment(msg.message_time).format('DD.MM.YY H:mm')
